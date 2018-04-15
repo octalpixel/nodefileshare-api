@@ -1,0 +1,52 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const _ = require("lodash");
+const mongoDB = require("mongodb");
+class FileModel {
+    constructor(app) {
+        this.app = app;
+        // this.modelObject = {
+        //     name: null,
+        //     originalName: null,
+        //     size: null,
+        //     createdAt: null,
+        //     mimeType: null
+        // }
+        this.db = this.app.get("db").db();
+        this.collection = "files";
+    }
+    getFileData(object) {
+        // console.log("---------------------------------------------------")
+        // console.log("Object passed", object)
+        // console.log("---------------------------------------------------")
+        // this.modelObject.name = _.get(object, "filename")
+        // this.modelObject.originalName = _.get(object, "originalname")
+        // this.modelObject.size = _.get(object, "size")
+        // this.modelObject.mimeType = _.get(object, "mimetype")
+        // this.modelObject.createdAt = Date.now()
+        let modelObject = {
+            name: _.get(object, "filename"),
+            originalName: _.get(object, "originalname"),
+            size: _.get(object, "size"),
+            createdAt: _.get(object, "mimetype"),
+            mimeType: Date.now()
+        };
+        return modelObject;
+    }
+    // toJSON() {
+    //     return this.modelObject
+    // }
+    save(arrayItems, callback) {
+        // console.log("this is the stuff", this.modelObject)
+        this.db.collection(this.collection).insertMany(arrayItems, (err, mongoResults) => {
+            callback(err, arrayItems, mongoResults);
+        });
+    }
+    getFile(id, callback) {
+        // console.log(id)
+        this.db.collection(this.collection).findOne({ _id: new mongoDB.ObjectId(id) }, (err, result) => {
+            callback(err, result);
+        });
+    }
+}
+exports.default = FileModel;
